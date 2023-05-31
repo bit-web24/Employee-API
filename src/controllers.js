@@ -25,8 +25,21 @@ const listEmployees = (req, res) => {
 };
 
 const getEmployee = (req, res) => {
-
-}
+    const employeeId = req.params.id;
+  
+    Employee.findByPk(employeeId)
+      .then((employee) => {
+        if (employee) {
+          res.json({ employee });
+        } else {
+          res.status(404).json({ error: 'Employee not found' });
+        }
+      })
+      .catch((error) => {
+        console.error('Error retrieving employee:', error);
+        res.status(500).json({ error: 'Failed to retrieve employee' });
+      });
+  };
 
 const updateEmployee = (req, res) => {
 
