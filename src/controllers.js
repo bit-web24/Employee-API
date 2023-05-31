@@ -1,20 +1,20 @@
-function createEmployee(){
+const createEmployee = (req, res) => {
 
 }
 
-function listEmployees(){
+const listEmployees = (req, res) => {
 
 }
 
-function getEmployee(){
+const getEmployee = (req, res) => {
 
 }
 
-function updateEmployee(){
+const updateEmployee = (req, res) => {
 
 }
 
-function deleteEmployee(){
+const deleteEmployee = (req, res) => {
 
 }
 
