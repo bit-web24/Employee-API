@@ -56,7 +56,16 @@ const updateEmployee = (req, res) => {
 }
 
 const deleteEmployee = (req, res) => {
+    const employeeId = req.params.id;
 
+    Employee.destroy({ where: { id: employeeId } })
+    .then(() => {
+        res.status(200).json({ message: 'Employee deleted successfully' });
+    })
+    .catch((error) => {
+        console.log('Error deleting Employee', error);
+        res.status(500).json({ error: 'Failed to delete employee' });
+    });
 }
 
 module.exports = {
