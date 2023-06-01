@@ -14,9 +14,20 @@ const createEmployee = (req, res) => {
 };
 
 const listEmployees = (req, res) => {
-    Employee.findAll()
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+
+    const offset = (page - 1) * limit;
+    Employee.findAll({
+        limit: limit,
+        offset: offset
+    })
         .then((employees) => {
-            res.json({ employees });
+            res.json({
+                page: page,
+                limit: limit,
+                data: employees
+            });
         })
         .catch((error) => {
             console.error('Error retrieving employees:', error);
@@ -59,13 +70,13 @@ const deleteEmployee = (req, res) => {
     const employeeId = req.params.id;
 
     Employee.destroy({ where: { id: employeeId } })
-    .then(() => {
-        res.status(200).json({ message: 'Employee deleted successfully' });
-    })
-    .catch((error) => {
-        console.log('Error deleting Employee', error);
-        res.status(500).json({ error: 'Failed to delete employee' });
-    });
+        .then(() => {
+            res.status(200).json({ message: 'Employee deleted successfully' });
+        })
+        .catch((error) => {
+            console.log('Error deleting Employee', error);
+            res.status(500).json({ error: 'Failed to delete employee' });
+        });
 }
 
 module.exports = {

@@ -28,6 +28,14 @@ const Employee = sequelize.define('Employee', {
     validate: {
       is: /^[0-9]{10}$/
     }
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
   }
 });
 
