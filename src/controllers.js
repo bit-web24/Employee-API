@@ -5,11 +5,11 @@ const createEmployee = (req, res) => {
 
     Employee.create({ name, email, phone })
         .then(() => {
-            res.status(201).json({ message: 'Employee created successfully' });
+            return res.status(201).json({ message: 'Employee created successfully' });
         })
         .catch((error) => {
             console.error('Error creating employee:', error);
-            res.status(500).json({ error: 'Failed to create employee' });
+            return res.status(500).json({ error: 'Failed to create employee' });
         });
 };
 
@@ -23,7 +23,7 @@ const listEmployees = (req, res) => {
         offset: offset
     })
         .then((employees) => {
-            res.json({
+            return res.json({
                 page: page,
                 limit: limit,
                 data: employees
@@ -31,52 +31,53 @@ const listEmployees = (req, res) => {
         })
         .catch((error) => {
             console.error('Error retrieving employees:', error);
-            res.status(500).json({ error: 'Failed to retrieve employees' });
+            return res.status(500).json({ error: 'Failed to retrieve employees' });
         });
 };
 
-const getEmployee = (req, res) => {
+const getEmployee = async (req, res) => {
     const employeeId = req.params.id;
-
-    Employee.findByPk(employeeId)
-        .then((employee) => {
-            if (employee) {
-                res.json({ employee });
-            } else {
-                res.status(404).json({ error: 'Employee not found' });
-            }
-        })
-        .catch((error) => {
-            console.error('Error retrieving employee:', error);
-            res.status(500).json({ error: 'Failed to retrieve employee' });
-        });
+    try {
+        const foundEmployee = await Employee.findByPk(employeeId);
+        if (!foundEmployee) {
+            return res.status(404).json({ error: 'Employee not found' });
+        }
+        return res.json({ foundEmployee });
+    }
+    catch (error) {
+        console.error('Error retrieving employee:', error);
+        return res.status(500).json({ error: 'Failed to retrieve employee' });
+    };
 };
 
-const updateEmployee = (req, res) => {
+const updateEmployee = async (req, res) => {
     const { name, email, phone } = req.body;
     const employeeId = req.params.id;
-
-    Employee.update({ name, email, phone }, { where: { id: employeeId } })
-        .then(() => {
-            res.status(200).json({ message: 'Employee updated successfully' });
-        })
-        .catch((error) => {
-            console.log('Error updating Employee:', error);
-            res.status(500).json({ error: 'Failed to update Employee' });
-        });
+    try {
+        const updated = await Employee.update({ name, email, phone }, { where: { id: employeeId } });
+        if (updated == 0) {
+            return res.status(404).json({ error: 'Employee not found' });
+        }
+        return res.status(200).json({ message: 'Employee updated successfully' });
+    }
+    catch (error) {
+        console.log('Error updating Employee:', error);
+        return res.status(500).json({ error: 'Failed to update Employee' });
+    };
 }
 
-const deleteEmployee = (req, res) => {
+const deleteEmployee = async (req, res) => {
     const employeeId = req.params.id;
-
-    Employee.destroy({ where: { id: employeeId } })
-        .then(() => {
-            res.status(200).json({ message: 'Employee deleted successfully' });
-        })
-        .catch((error) => {
-            console.log('Error deleting Employee', error);
-            res.status(500).json({ error: 'Failed to delete employee' });
-        });
+    try {
+        const destroyed = await Employee.destroy({ where: { id: employeeId } });
+        if (!destroyed) {
+            return res.status(404).json({ error: 'Employee not found' });
+        }
+        return res.status(200).json({ message: 'Employee deleted successfully' });
+    }
+    catch (error) {
+        return res.status(500).json({ error: 'Failed to delete employee' });
+    };
 }
 
 module.exports = {
