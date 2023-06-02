@@ -6,6 +6,7 @@ This API provides endpoints for managing employees, including creating, retrievi
 
 - [Endpoints](#endpoints)
 - [Models](#models)
+- [Setup and Run](#setup-and-run)
 
 ## Endpoints
 
@@ -114,3 +115,95 @@ This API provides endpoints for managing employees, including creating, retrievi
   - `relationship`: string - The relationship of the secondary emergency contact to the employee
   - `createdAt`: string (date-time) - The date and time when the secondary emergency contact was created
   - `updatedAt`: string (date-time) - The date and time when the secondary emergency contact was last updated
+
+## Setup and Run
+
+To set up and run the Employee Management API, follow these steps:
+
+1. Clone the repository:
+
+   ```shell
+   git clone https://github.com/bit-web24/Employee-API.git
+   ```
+
+2. Install dependencies:
+
+   ```shell
+   cd Employee-API
+   npm install
+   ```
+
+3. Configure the API:
+
+   - Rename the `.env.example` file to `.env`.
+   - Open the `.env` file and set the required environment variables, such as the database connection details.
+
+4. Run the API:
+
+   ```shell
+   npm start
+   ```
+
+   This will start the API server, and you should see a message indicating that the server is running.
+
+5. Test the API:
+
+   You can now test the API endpoints using a tool like Postman or cURL. The base URL for the API will be `http://localhost:3000/`.
+
+   Example requests:
+
+   - Create a new employee:
+
+     ```http
+     POST /employees
+     Content-Type: application/json
+
+     {
+       "fullName": "John Doe",
+       "jobTitle": "Software Engineer",
+       "phoneNumber": "1234567890",
+       "email": "johndoe@example.com",
+       "address": "123 Main Street",
+       "city": "New York",
+       "state": "NY",
+       "primaryEmergencyContact": {
+         "contactName": "Jane Smith",
+         "phoneNumber": "9876543210",
+         "relationship": "Spouse"
+       },
+       "secondaryEmergencyContact": {
+         "contactName": "Alex Johnson",
+         "phoneNumber": "8765432109",
+         "relationship": "Friend"
+       }
+     }
+     ```
+
+   - Get a list of employees:
+
+     ```http
+     GET /employees
+     ```
+
+   - Get an employee by ID:
+
+     ```http
+     GET /employees/{id}
+     ```
+
+   - Update an employee by ID:
+
+     ```http
+     PUT /employees/{id}
+     Content-Type: application/json
+
+     {
+       "fullName": "Updated Name"
+     }
+     ```
+
+   - Delete an employee by ID:
+
+     ```http
+     DELETE /employees/{id}
+     ```
