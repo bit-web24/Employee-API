@@ -1,7 +1,7 @@
 {
   "name": "employee-api",
   "version": "1.0.0",
-  "description": "CRUD features in Node.js using MySQL as the database.",
+  "description": "Employee Management API",
   "main": "app.js",
   "directories": {
     "test": "test"
