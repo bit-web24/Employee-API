@@ -1,11 +1,41 @@
-const { Employee } = require('./models');
+const {
+    Employee,
+    PrimaryEmergencyContact,
+    SecondaryEmergencyContact
+} = require('./models');
 
 const createEmployee = async (req, res) => {
     try {
-        const { name, email, phone } = req.body;
-        await Employee.create({ name, email, phone });
+        const {
+            fullName,
+            jobTitle,
+            phoneNumber,
+            email,
+            address,
+            city,
+            state,
+            primaryEmergencyContact,
+            secondaryEmergencyContact
+        } = req.body;
+        await Employee.create({
+            fullName,
+            jobTitle,
+            phoneNumber,
+            email,
+            address,
+            city,
+            state,
+            primaryEmergencyContact,
+            secondaryEmergencyContact
+        }, {
+            include: [
+                { association: Employee.associations.primaryEmergencyContact },
+                { association: Employee.associations.secondaryEmergencyContact }
+            ]
+        });
         return res.status(201).json({ message: 'Employee created successfully' });
     } catch (error) {
+        console.log(error);
         return res.status(500).json({ error: 'Failed to create employee' });
     }
 };
@@ -18,7 +48,17 @@ const listEmployees = async (req, res) => {
 
         const employees = await Employee.findAll({
             limit: limit,
-            offset: offset
+            offset: offset,
+            include: [
+                {
+                    model: PrimaryEmergencyContact,
+                    as: 'primaryEmergencyContact'
+                },
+                {
+                    model: SecondaryEmergencyContact,
+                    as: 'secondaryEmergencyContact'
+                }
+            ]
         });
 
         return res.json({
@@ -34,7 +74,19 @@ const listEmployees = async (req, res) => {
 const getEmployee = async (req, res) => {
     const employeeId = req.params.id;
     try {
-        const foundEmployee = await Employee.findByPk(employeeId);
+        const foundEmployee = await Employee.findByPk(employeeId, {
+            include: [
+                {
+                    model: PrimaryEmergencyContact,
+                    as: 'primaryEmergencyContact'
+                },
+                {
+                    model: SecondaryEmergencyContact,
+                    as: 'secondaryEmergencyContact'
+                }
+            ]
+        });
+
         if (!foundEmployee) {
             return res.status(404).json({ error: 'Employee not found' });
         }
@@ -46,13 +98,43 @@ const getEmployee = async (req, res) => {
 };
 
 const updateEmployee = async (req, res) => {
-    const { name, email, phone } = req.body;
+    const {
+        fullName,
+        jobTitle,
+        phoneNumber,
+        email,
+        address,
+        city,
+        state,
+        primaryEmergencyContact,
+        secondaryEmergencyContact
+    } = req.body;
     const employeeId = req.params.id;
+
     try {
+
         const [rowsUpdated] = await Employee.update(
-            { name, email, phone },
-            { where: { id: employeeId } }
-        );
+            {
+                fullName,
+                jobTitle,
+                phoneNumber,
+                email,
+                address,
+                city,
+                state,
+                primaryEmergencyContact,
+                secondaryEmergencyContact
+            },
+            {
+                where: { id: employeeId }
+            },
+            {
+                include: [
+                    { association: Employee.associations.primaryEmergencyContact },
+                    { association: Employee.associations.secondaryEmergencyContact }
+                ]
+            });
+
         if (rowsUpdated === 0) {
             return res.status(404).json({ error: 'Employee not found' });
         }
@@ -66,6 +148,12 @@ const updateEmployee = async (req, res) => {
 const deleteEmployee = async (req, res) => {
     const employeeId = req.params.id;
     try {
+        await PrimaryEmergencyContact.destroy({
+            where: { employeeId: employeeId }
+        });
+        await SecondaryEmergencyContact.destroy({
+            where: { employeeId: employeeId }
+        });
         const rowsDeleted = await Employee.destroy({ where: { id: employeeId } });
         if (rowsDeleted === 0) {
             return res.status(404).json({ error: 'Employee not found' });
