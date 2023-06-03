@@ -81,6 +81,7 @@ This API provides endpoints for managing employees, including creating, retrievi
   - Status: `500 Internal Server Error` - Failed to delete employee
 
 ## Models
+![Screenshot 2023-06-03 103146](https://github.com/bit-web24/Employee-API/assets/62652273/3b7ced29-0608-404e-bb9a-1813e95750cd)
 
 ### Employee
 
